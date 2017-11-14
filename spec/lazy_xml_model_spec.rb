@@ -1,0 +1,9 @@
+RSpec.describe LazyXmlModel do
+  it "has a version number" do
+    expect(LazyXmlModel::VERSION).not_to be nil
+  end
+
+  it "does something useful" do
+    expect(false).to eq(true)
+  end
+end
