@@ -1,3 +1,9 @@
+require 'simplecov'
+require 'codecov'
+
+SimpleCov.start
+SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
+
 require "bundler/setup"
 require "lazy_xml_model"
 require 'pry'
@@ -18,3 +24,4 @@ end
 require_relative 'support/models/xml_record'
 require_relative 'support/models/company'
 require_relative 'support/shared_contexts/example_xml'
+
