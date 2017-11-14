@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "lazy_xml_model"
+require 'pry'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -12,3 +13,8 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+# TODO: Make this require all *.rb files in support
+require_relative 'support/models/xml_record'
+require_relative 'support/models/company'
+require_relative 'support/shared_contexts/example_xml'
