@@ -58,6 +58,22 @@ module LazyXmlModel
       self << new_object
     end
 
+    def attributes=(attributes)
+      attributes.each do |i, object_params|
+        i = i.to_i
+
+        if self[i].present?
+          if object_params[:_destroy] == true
+            delete(self[i]) # Delete the object
+          else
+            self[i].assign_attributes(object_params) # Update the object
+          end
+        else
+          build(object_params) # Build the object
+        end
+      end
+    end
+
     private
 
     def collection_xml_doc

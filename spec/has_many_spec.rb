@@ -198,21 +198,69 @@ RSpec.describe LazyXmlModel do
   end
 
   describe '#collection_attributes=' do
-    let(:company) { Company.new }
     let(:employee1_attributes) { { name: 'Kurt Campbell', jobtitle: 'Senior XML Specialist' } }
     let(:employee2_attributes) { { name: 'Julie McKenzie', jobtitle: 'Lead Gem Designer' } }
+    let(:employee3_attributes) { { name: 'Doris Beckminster', jobtitle: 'Corporate Interactions Adviser' } }
 
-    before do
-      company.employees_attributes = { '0' => employee1_attributes, '1' => employee2_attributes }
+    context 'on an empty collection' do
+      let(:company) { Company.new }
+
+      before do
+        company.employees_attributes = { '0' => employee1_attributes, '1' => employee2_attributes }
+      end
+
+      it 'adds the object to the collection' do
+        expect(company.employees.count).to eq(2)
+        expect(company.employees[0]).to have_attributes(employee1_attributes)
+        expect(company.employees[1]).to have_attributes(employee2_attributes)
+      end
+
+      it 'includes the object in the xml output' do
+        expect(company.to_xml).to include(
+          '<employee',
+          'Kurt Campbell',
+          'Senior XML Specialist',
+          'Julie McKenzie',
+          'Lead Gem Designer'
+        )
+      end
     end
 
-    it 'adds the object to the collection' do
-      expect(company.employees.count).to eq(2)
-      expect(company.employees[0]).to have_attributes(employee1_attributes)
-    end
+    context 'on a collection with elements' do
+      let(:company) { Company.new }
 
-    it 'includes the object in the xml output' do
-      expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+      before do
+        # 1. Create the two employees
+        company.employees_attributes = {
+          '0' => employee1_attributes,
+          '1' => employee2_attributes
+        }
+
+        # 2. Update the employees
+        employee1_attributes[:jobtitle] = 'Senior XML Strategist'
+
+        company.employees_attributes = {
+          '0' => employee1_attributes, # Employee1 gets jobtitle updated
+          '1' => { _destroy: true },   # Employee2 gets deleted
+          '2' => employee3_attributes  # Employee3 is added
+        }
+      end
+
+      it 'updates the existing objects' do
+        expect(company.employees.count).to eq(2)
+        expect(company.employees[0]).to have_attributes(
+          name: 'Kurt Campbell',
+          jobtitle: 'Senior XML Strategist'
+        )
+      end
+
+      it 'deletes the objects to delete' do
+        expect(company.to_xml).not_to include(*employee2_attributes.values)
+      end
+
+      it 'adds new objects' do
+        expect(company.employees[1]).to have_attributes(employee3_attributes)
+      end
     end
   end
 end

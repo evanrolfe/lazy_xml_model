@@ -55,6 +55,11 @@ module LazyXmlModel
     parent_xml_doc.delete(xml_doc)
   end
 
+  # NOTE: This is required by rails FormHelper#fields_for to used nested forms
+  def persisted?
+    false
+  end
+
   private
 
   def default_xml_doc

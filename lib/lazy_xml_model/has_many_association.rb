@@ -24,10 +24,7 @@ module LazyXmlModel
         # NOTE: This method requires that your object follows the API defined in ActiveModel::AttributeAssignment
         define_method("#{association_name}_attributes=") do |attributes|
           collection_proxy = send(association_name)
-
-          attributes.each do |_i, object_params|
-            collection_proxy.build(object_params)
-          end
+          collection_proxy.attributes = attributes
         end
       end
     end
