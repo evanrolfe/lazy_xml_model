@@ -46,6 +46,14 @@ module LazyXmlModel
       self.object = new_object
     end
 
+    def attributes=(attributes)
+      if object.present?
+        object.assign_attributes(attributes) # Update the object
+      else
+        build_object(attributes) # Build the object
+      end
+    end
+
     private
 
     def klass

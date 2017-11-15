@@ -38,8 +38,9 @@ module LazyXmlModel
 
         # _attributes= Builder Method
         # NOTE: This method requires that your object follows the API defined in ActiveModel::AttributeAssignment
-        define_method("#{association_name}_attributes=") do |params|
-          send("build_#{association_name}".to_sym, params)
+        define_method("#{association_name}_attributes=") do |attributes|
+          object_proxy = send("#{association_name}_proxy".to_sym)
+          object_proxy.attributes = attributes
         end
       end
     end

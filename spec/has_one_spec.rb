@@ -71,17 +71,36 @@ RSpec.describe LazyXmlModel do
   describe 'object _attributes= method' do
     let(:company) { Company.new }
 
-    before do
-      company.description_attributes = { type: 'about', foundingyear: '1992' }
+    context 'when the object doesnt exist yet' do
+      before do
+        company.description_attributes = { type: 'about', foundingyear: '1992' }
+      end
+
+      it 'sets the object' do
+        expect(company.description.type).to eq('about')
+        expect(company.description.foundingyear).to eq('1992')
+      end
+
+      it 'includes the object in the xml output' do
+        expect(company.to_xml).to include('description', 'type', 'about', 'foundingyear', '1992')
+      end
     end
 
-    it 'sets the object' do
-      expect(company.description.type).to eq('about')
-      expect(company.description.foundingyear).to eq('1992')
-    end
+    context 'when the object already exists' do
+      before do
+        company.description = Description.new(type: 'about', foundingyear: '2017')
+        company.description_attributes = { type: 'about', foundingyear: '1992' }
+      end
 
-    it 'includes the object in the xml output' do
-      expect(company.to_xml).to include('description', 'type', 'about', 'foundingyear', '1992')
+      it 'sets the object' do
+        expect(company.description.type).to eq('about')
+        expect(company.description.foundingyear).to eq('1992')
+      end
+
+      it 'includes the object in the xml output' do
+        expect(company.to_xml).not_to include('2017')
+        expect(company.to_xml).to include('description', 'type', 'about', 'foundingyear', '1992')
+      end
     end
   end
 
