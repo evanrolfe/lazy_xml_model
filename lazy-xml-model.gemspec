@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "lazy_xml_model/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "lazy_xml_model"
+  spec.name          = "lazy-xml-model"
   spec.version       = LazyXmlModel::VERSION
   spec.authors       = ["Evan Rolfe"]
   spec.email         = ["esrolfe@suse.de"]

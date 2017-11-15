@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lazy_xml_model (0.1.0)
+    lazy-xml-model (0.1.0)
       activemodel
       activesupport
       rubysl-rexml (~> 2.0.4)
@@ -63,7 +63,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.16)
   codecov
-  lazy_xml_model!
+  lazy-xml-model!
   pry
   rake (~> 10.0)
   rspec (~> 3.0)
