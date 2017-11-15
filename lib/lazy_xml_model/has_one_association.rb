@@ -1,9 +1,11 @@
+require_relative 'object_proxy'
+
 module LazyXmlModel
-  module ObjectNode
+  module HasOneAssociation
     extend ActiveSupport::Concern
 
     included do
-      def self.object_node(association_name, options)
+      def self.has_one(association_name, options)
         association_name = association_name.to_s
 
         # Proxy Accessor Method

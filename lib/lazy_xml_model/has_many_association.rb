@@ -1,9 +1,11 @@
+require_relative 'collection_proxy'
+
 module LazyXmlModel
-  module ArrayNode
+  module HasManyAssociation
     extend ActiveSupport::Concern
 
     included do
-      def self.array_node(association_name, options = {})
+      def self.has_many(association_name, options = {})
         # Accessor Method
         define_method(association_name) do
           collection_proxy = instance_variable_get("@#{association_name}")
