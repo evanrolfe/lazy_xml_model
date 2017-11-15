@@ -46,9 +46,16 @@ module LazyXmlModel
     end
     alias_method :clear, :delete_all
 
-    # TODO:
     def build(params = {})
-      raise NotImplementedError
+      new_object =
+        begin
+          klass.new(params)
+        # Incase the class does not include ActiveModel::AttributeAssignment
+        rescue ArgumentError
+          klass.new
+        end
+
+      self << new_object
     end
 
     private
@@ -74,9 +81,8 @@ module LazyXmlModel
     end
 
     def klass
-      return options[:class_name].constantize if options[:class_name].present?
-
-      association_name.camelize.constantize
+      return ArgumentError, 'You must specify :class_name!' if options[:class_name].nil?
+      options[:class_name].constantize
     end
   end
 end

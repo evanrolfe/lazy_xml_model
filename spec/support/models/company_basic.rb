@@ -3,6 +3,7 @@ class CompanyBasic
 
   attribute_node :name
   has_one :description, class_name: 'DescriptionBasic'
+  has_many :employees, class_name: 'EmployeeBasic'
 end
 
 class DescriptionBasic
@@ -16,4 +17,15 @@ class DescriptionBasic
   element_node :website
 
   self.tag = 'description'
+end
+
+class EmployeeBasic
+  include LazyXmlModel
+
+  attribute_node :name
+
+  element_node :jobtitle
+  element_node :yearjoined
+
+  self.tag = 'employee'
 end

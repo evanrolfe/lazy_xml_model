@@ -108,4 +108,111 @@ RSpec.describe LazyXmlModel do
       )
     end
   end
+
+  describe '#collection.build' do
+    context 'without arguments' do
+      context 'on an empty collection' do
+        let(:company) { Company.new }
+
+        before do
+          company.employees.build
+          company.employees[0].name = 'Kurt Campbell'
+          company.employees[0].jobtitle = 'Senior XML Specialist'
+        end
+
+        it 'adds the object to the collection' do
+          expect(company.employees.count).to eq(1)
+          expect(company.employees[0]).to have_attributes(
+            name: 'Kurt Campbell',
+            jobtitle: 'Senior XML Specialist'
+          )
+        end
+
+        it 'includes the object in the xml output' do
+          expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+        end
+      end
+
+      context 'on a collection with elements' do
+        let(:company) { Company.build_from_xml_str(company_xml_str) }
+
+        before do
+          company.employees.build
+          company.employees[3].name = 'Kurt Campbell'
+          company.employees[3].jobtitle = 'Senior XML Specialist'
+        end
+
+        it 'adds the object to the collection' do
+          expect(company.employees.count).to eq(4)
+          expect(company.employees[3]).to have_attributes(
+            name: 'Kurt Campbell',
+            jobtitle: 'Senior XML Specialist'
+          )
+        end
+
+        it 'includes the object in the xml output' do
+          expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+        end
+      end
+
+      context 'on a collection for an object that does not includes ActiveModel' do
+        let(:company) { CompanyBasic.new }
+
+        before do
+          company.employees.build
+          company.employees[0].name = 'Kurt Campbell'
+          company.employees[0].jobtitle = 'Senior XML Specialist'
+        end
+
+        it 'adds the object to the collection' do
+          expect(company.employees.count).to eq(1)
+          expect(company.employees[0]).to have_attributes(
+            name: 'Kurt Campbell',
+            jobtitle: 'Senior XML Specialist'
+          )
+        end
+
+        it 'includes the object in the xml output' do
+          expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+        end
+      end
+    end
+
+    context 'with arguments' do
+      let(:company) { Company.new }
+      let(:employee_attributes) { { name: 'Kurt Campbell', jobtitle: 'Senior XML Specialist' } }
+
+      before do
+        company.employees.build(employee_attributes)
+      end
+
+      it 'adds the object to the collection' do
+        expect(company.employees.count).to eq(1)
+        expect(company.employees[0]).to have_attributes(employee_attributes)
+      end
+
+      it 'includes the object in the xml output' do
+        expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+      end
+    end
+  end
+
+  describe '#collection_attributes=' do
+    let(:company) { Company.new }
+    let(:employee1_attributes) { { name: 'Kurt Campbell', jobtitle: 'Senior XML Specialist' } }
+    let(:employee2_attributes) { { name: 'Julie McKenzie', jobtitle: 'Lead Gem Designer' } }
+
+    before do
+      company.employees_attributes = { '0' => employee1_attributes, '1' => employee2_attributes }
+    end
+
+    it 'adds the object to the collection' do
+      expect(company.employees.count).to eq(2)
+      expect(company.employees[0]).to have_attributes(employee1_attributes)
+    end
+
+    it 'includes the object in the xml output' do
+      expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+    end
+  end
 end
