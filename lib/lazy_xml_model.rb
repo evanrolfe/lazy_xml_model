@@ -25,7 +25,8 @@ module LazyXmlModel
     #
     def self.build_from_xml_str(xml_string)
       object = self.new
-      object.xml_doc = REXML::Document.new(xml_string).root
+      object.parent_xml_doc = REXML::Document.new(xml_string)
+      object.xml_doc = object.parent_xml_doc.root
       object
     end
 
@@ -45,7 +46,12 @@ module LazyXmlModel
 
   def to_xml
     output = ''
-    REXML::Formatters::Pretty.new.write(xml_doc, output)
+
+    if root_node?
+      parent_xml_doc.write(output)
+    else
+      REXML::Formatters::Pretty.new.write(xml_doc, output)
+    end
     output
   end
 
@@ -71,7 +77,7 @@ module LazyXmlModel
   end
 
   def root_node?
-    parent_xml_doc.nil?
+    parent_xml_doc.is_a? REXML::Document
   end
 end
 
