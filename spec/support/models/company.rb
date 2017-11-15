@@ -1,6 +1,8 @@
 class Company < XmlRecord
   attribute_node :name
+
   has_one :description, class_name: 'Description'
+  has_many :employees, class_name: 'Employee'
 end
 
 class Description < XmlRecord
