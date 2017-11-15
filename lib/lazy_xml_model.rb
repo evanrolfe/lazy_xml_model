@@ -20,7 +20,7 @@ module LazyXmlModel
 
     attr_writer :xml_doc
     attr_accessor :parent_xml_doc
-    cattr_accessor :root_node
+    cattr_accessor :tag
 
     #
     # Class Methods
@@ -60,11 +60,11 @@ module LazyXmlModel
   private
 
   def default_xml_doc
-    REXML::Document.new("<#{root_node_name}/>").root
+    REXML::Document.new("<#{root_tag}/>").root
   end
 
-  def root_node_name
-    self.root_node || self.class.name.demodulize.downcase
+  def root_tag
+    self.tag || self.class.name.demodulize.downcase
   end
 
   def root_node?

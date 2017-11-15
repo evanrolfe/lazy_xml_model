@@ -23,5 +23,8 @@ end
 # TODO: Make this require all *.rb files in support
 require_relative 'support/models/xml_record'
 require_relative 'support/models/company'
+require_relative 'support/models/description'
+require_relative 'support/models/company_basic'
+require_relative 'support/models/description_basic'
 require_relative 'support/shared_contexts/example_xml'
 
