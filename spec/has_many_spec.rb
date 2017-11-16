@@ -215,9 +215,9 @@ XML
   end
 
   describe '#collection_attributes=' do
-    let(:employee1_attributes) { { name: 'Kurt Campbell', jobtitle: 'Senior XML Specialist' } }
-    let(:employee2_attributes) { { name: 'Julie McKenzie', jobtitle: 'Lead Gem Designer' } }
-    let(:employee3_attributes) { { name: 'Doris Beckminster', jobtitle: 'Corporate Interactions Adviser' } }
+    let(:employee1_attributes) { { name: 'Kurt Campbell', jobtitle: 'Senior XML Specialist', _destroy: '0' } }
+    let(:employee2_attributes) { { name: 'Julie McKenzie', jobtitle: 'Lead Gem Designer', _destroy: '0' } }
+    let(:employee3_attributes) { { name: 'Doris Beckminster', jobtitle: 'Corporate Interactions Adviser', _destroy: '0' } }
 
     context 'on an empty collection' do
       let(:company) { Company.new }
@@ -228,8 +228,8 @@ XML
 
       it 'adds the object to the collection' do
         expect(company.employees.count).to eq(2)
-        expect(company.employees[0]).to have_attributes(employee1_attributes)
-        expect(company.employees[1]).to have_attributes(employee2_attributes)
+        expect(company.employees[0]).to have_attributes(employee1_attributes.except(:_destroy))
+        expect(company.employees[1]).to have_attributes(employee2_attributes.except(:_destroy))
       end
 
       it 'includes the object in the xml output' do
@@ -272,11 +272,11 @@ XML
       end
 
       it 'deletes the objects to delete' do
-        expect(company.to_xml).not_to include(*employee2_attributes.values)
+        expect(company.to_xml).not_to include(*employee2_attributes.except(:_destroy).values)
       end
 
       it 'adds new objects' do
-        expect(company.employees[1]).to have_attributes(employee3_attributes)
+        expect(company.employees[1]).to have_attributes(employee3_attributes.except(:_destroy))
       end
     end
   end

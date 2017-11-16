@@ -66,10 +66,10 @@ module LazyXmlModel
           if [true, 1, '1'].include?(object_params[:_destroy])
             delete(self[i]) # Delete the object
           else
-            self[i].assign_attributes(object_params) # Update the object
+            self[i].assign_attributes(object_params.except(:_destroy)) # Update the object
           end
         else
-          build(object_params) # Build the object
+          build(object_params.except(:_destroy)) # Build the object
         end
       end
     end
