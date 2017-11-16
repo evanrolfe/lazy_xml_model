@@ -3,21 +3,24 @@ module LazyXmlModel
     include Enumerable
     extend Forwardable
 
-    attr_reader :association_name, :xml_doc, :options
+    attr_reader :association_name, :xml_element, :options
 
     def_delegators :collection, :each, :[], :size, :length, :empty?
 
-    def initialize(association_name, xml_doc, options = {})
+    def initialize(association_name, xml_element, options = {})
       @association_name = association_name
-      @xml_doc = xml_doc
+      @xml_element = xml_element
       @options = options
     end
 
     def <<(item)
+      item.xml_document = nil
+      item.xml_parent_element = xml_element
+
       if collection.any?
-        xml_doc.insert_after(collection.last.xml_doc, item.xml_doc)
+        collection.last.xml_element.add_next_sibling(item.xml_element)
       else
-        xml_doc.elements << item.xml_doc
+        xml_element.add_child(item.xml_element)
       end
 
       @collection << item
@@ -30,19 +33,16 @@ module LazyXmlModel
     end
 
     def delete(item)
-      # Delete the object thats wrapping this xml document
-      item_from_collection = @collection.find { |collection_item| collection_item.xml_doc == item.xml_doc }
-      @collection.delete(item_from_collection)
+      # Delete the object thats wrapping this xml element
+      @collection.delete(item)
 
       # Delete from the xml document
-      xml_doc.delete(item.xml_doc)
+      item.xml_element.remove
     end
 
     def delete_all
       @collection = []
-      xml_doc.elements.to_a(association_name).each do |element|
-        xml_doc.delete(element)
-      end
+      xml_elements.each(&:remove)
     end
     alias_method :clear, :delete_all
 
@@ -76,20 +76,25 @@ module LazyXmlModel
 
     private
 
-    def collection_xml_doc
-      xml_doc.elements.to_a(association_name)
+    def xml_elements
+      xml_element.elements.select { |element| element.name == association_name }
     end
 
     def collection
       @collection ||= []
 
-      collection_xml_doc.map do |item_xml_doc|
-        item_from_collection = @collection.find { |item| item.xml_doc == item_xml_doc }
+      xml_elements.map do |element|
+        item_from_collection = @collection.find { |item| item.xml_element == element }
 
         if item_from_collection.present?
           item_from_collection
         else
-          item = klass.build_from_xml_doc(item_xml_doc)
+          item = begin
+            new_item = klass.new
+            new_item.xml_parent_element = xml_element
+            new_item.xml_element = element
+            new_item
+          end
           @collection << item
           item
         end

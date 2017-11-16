@@ -29,6 +29,13 @@ RSpec.describe LazyXmlModel do
 
   describe '#collection<<' do
     let(:new_employee) { Employee.new(name: 'Kurt Campbell', jobtitle: 'Senior XML Specialist') }
+    let(:expected_xml) do
+<<-XML
+  <employee name=\"Kurt Campbell\">
+    <jobtitle>Senior XML Specialist</jobtitle>
+  </employee>
+XML
+    end
 
     context 'on an empty collection' do
       let(:company) { Company.new }
@@ -43,7 +50,7 @@ RSpec.describe LazyXmlModel do
       end
 
       it 'includes the object in the xml output' do
-        expect(company.to_xml).to include('<employee', new_employee.name, new_employee.jobtitle)
+        expect(company.to_xml).to include(expected_xml)
       end
     end
 
@@ -60,7 +67,7 @@ RSpec.describe LazyXmlModel do
       end
 
       it 'includes the object in the xml output' do
-        expect(company.to_xml).to include('<employee', new_employee.name, new_employee.jobtitle)
+        expect(company.to_xml).to include(expected_xml)
       end
     end
   end
@@ -113,6 +120,16 @@ RSpec.describe LazyXmlModel do
     context 'without arguments' do
       context 'on an empty collection' do
         let(:company) { Company.new }
+        let(:expected_xml) do
+          <<-XML
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+  <employee name="Kurt Campbell">
+    <jobtitle>Senior XML Specialist</jobtitle>
+  </employee>
+</company>
+          XML
+        end
 
         before do
           company.employees.build
@@ -129,7 +146,7 @@ RSpec.describe LazyXmlModel do
         end
 
         it 'includes the object in the xml output' do
-          expect(company.to_xml).to include('<employee', 'Kurt Campbell', 'Senior XML Specialist')
+          expect(company.to_xml).to eq(expected_xml)
         end
       end
 

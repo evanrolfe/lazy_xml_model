@@ -13,7 +13,7 @@ module LazyXmlModel
 
           collection_proxy = LazyXmlModel::CollectionProxy.new(
             association_name.to_s.singularize.gsub('_',''),
-            xml_doc,
+            xml_element,
             options
           )
           instance_variable_set("@#{association_name}", collection_proxy)

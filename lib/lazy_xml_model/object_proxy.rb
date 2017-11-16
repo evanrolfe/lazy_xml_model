@@ -1,25 +1,26 @@
 module LazyXmlModel
   class ObjectProxy
-    attr_reader :association_name, :xml_doc, :options
+    attr_reader :association_name, :xml_document, :xml_parent_element, :xml_element, :options
 
-    def initialize(association_name, xml_doc, options = {})
+    def initialize(association_name, xml_document, xml_parent_element, xml_element, options = {})
       @association_name = association_name
-      @xml_doc = xml_doc
+      @xml_document = xml_document
+      @xml_parent_element = xml_parent_element
+      @xml_element = xml_element
       @options = options
     end
 
     # Getter Method
     def object
-      return unless xml_doc.elements[association_name].present?
+      element = xml_element.elements.find { |element| element.name == association_name }
+      return unless element.present?
 
       @object ||= begin
-        object = klass.build_from_xml_doc(
-          xml_doc.elements[association_name]
-        )
-        object.parent_xml_doc = xml_doc
-        object
+        new_object = klass.new
+        new_object.xml_parent_element = xml_element
+        new_object.xml_element = element
+        new_object
       end
-      @object
     end
 
     # Setter Method
@@ -29,8 +30,11 @@ module LazyXmlModel
 
       @object = new_object
 
-      xml_doc.elements << @object.xml_doc
-      @object.parent_xml_doc = xml_doc
+      parent = xml_element
+      child = new_object.xml_element
+
+      parent.add_child(child)
+      new_object.xml_parent_element = parent
     end
 
     # Builder Method

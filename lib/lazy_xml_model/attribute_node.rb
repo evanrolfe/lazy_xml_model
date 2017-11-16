@@ -6,12 +6,12 @@ module LazyXmlModel
       def self.attribute_node(name)
         # Getter Method
         define_method(name) do
-          xml_doc.attributes[name.to_s]
+          xml_element.attributes[name.to_s].value
         end
 
         # Setter Method
         define_method("#{name}=") do |value|
-          xml_doc.attributes[name.to_s] = value
+          xml_element.set_attribute(name.to_s, value)
         end
       end
     end

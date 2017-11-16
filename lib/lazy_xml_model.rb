@@ -6,6 +6,7 @@ require 'lazy_xml_model/attribute_node'
 require 'lazy_xml_model/element_node'
 require 'lazy_xml_model/has_one_association'
 require 'lazy_xml_model/has_many_association'
+require 'nokogiri'
 
 module LazyXmlModel
   extend ActiveSupport::Concern
@@ -16,8 +17,7 @@ module LazyXmlModel
     include HasOneAssociation
     include ElementNode
 
-    attr_writer :xml_doc
-    attr_accessor :parent_xml_doc
+    attr_writer :xml_document, :xml_parent_element, :xml_element
     cattr_accessor :tag
 
     #
@@ -25,14 +25,7 @@ module LazyXmlModel
     #
     def self.build_from_xml_str(xml_string)
       object = self.new
-      object.parent_xml_doc = REXML::Document.new(xml_string)
-      object.xml_doc = object.parent_xml_doc.root
-      object
-    end
-
-    def self.build_from_xml_doc(xml_doc)
-      object = self.new
-      object.xml_doc = xml_doc
+      object.xml_document = Nokogiri::XML::Document.parse(xml_string, &:noblanks)
       object
     end
   end
@@ -40,44 +33,31 @@ module LazyXmlModel
   #
   # Instance Methods
   #
-  def xml_doc
-    @xml_doc ||= default_xml_doc
+  def xml_document
+    @xml_document ||= Nokogiri::XML::Document.parse("<#{root_tag}/>", &:noblanks)
+  end
+
+  def xml_parent_element
+    @xml_parent_element
+  end
+
+  def xml_element
+    @xml_element ||= xml_document.root
   end
 
   def to_xml
-    output = ''
-
-    if root_node?
-      parent_xml_doc.write(output)
-    else
-      REXML::Formatters::Pretty.new.write(xml_doc, output)
-    end
-    output
+    # TODO: Make this work for non-root objects
+    xml_document.to_xml(indent: 2, encoding: 'UTF-8')
   end
 
   def delete
-    raise StandardError, 'You cannot delete the root node of a document!' if root_node?
-
-    parent_xml_doc.delete(xml_doc)
-  end
-
-  # NOTE: This is required by rails FormHelper#fields_for to used nested forms
-  def persisted?
-    false
+    xml_element.remove
   end
 
   private
 
-  def default_xml_doc
-    REXML::Document.new("<#{root_tag}/>").root
-  end
-
   def root_tag
     self.tag || self.class.name.demodulize.downcase
-  end
-
-  def root_node?
-    parent_xml_doc.is_a? REXML::Document
   end
 end
 

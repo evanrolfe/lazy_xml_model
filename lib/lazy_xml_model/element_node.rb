@@ -7,19 +7,24 @@ module LazyXmlModel
         # Getter Method
         define_method(name) do
           name = name.to_s
-          xml_doc.elements[name].text if xml_doc.elements[name].present?
+          element = xml_element.elements.find { |element| element.name == name }
+
+          if element.present?
+            element.children.first.content
+          end
         end
 
         # Setter Method
         define_method("#{name}=") do |value|
           name = name.to_s
+          element = xml_element.elements.find { |element| element.name == name }
 
-          if xml_doc.elements[name].present?
-            xml_doc.elements[name].text=(value)
+          if element.present?
+            element.children.first.content = value
           else
-            element = REXML::Element.new(name)
-            element.text=(value)
-            xml_doc.elements << element
+            element = Nokogiri::XML::Element.new(name.to_s, xml_document)
+            element.content = value
+            xml_element.add_child(element)
           end
         end
       end

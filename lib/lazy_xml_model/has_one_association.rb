@@ -13,7 +13,7 @@ module LazyXmlModel
           object_proxy = instance_variable_get("@#{association_name}_proxy")
           return object_proxy if object_proxy.present?
 
-          object_proxy = LazyXmlModel::ObjectProxy.new(association_name, xml_doc, options)
+          object_proxy = LazyXmlModel::ObjectProxy.new(association_name, xml_document, xml_parent_element, xml_element, options)
           instance_variable_set("@#{association_name}_proxy", object_proxy)
           object_proxy
         end

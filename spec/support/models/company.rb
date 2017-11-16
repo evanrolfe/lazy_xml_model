@@ -3,6 +3,8 @@ class Company < XmlRecord
 
   has_one :description, class_name: 'Description'
   has_many :employees, class_name: 'Employee'
+
+  element_node :trading
 end
 
 class Description < XmlRecord
