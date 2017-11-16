@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash/indifferent_access'
+
 module LazyXmlModel
   class CollectionProxy
     include Enumerable
@@ -59,18 +61,26 @@ module LazyXmlModel
     end
 
     def attributes=(attributes)
+      indexes_to_delete = []
+
+      # 1. Update the existing items and create new ones
       attributes.each do |i, object_params|
         i = i.to_i
-
+        object_params = object_params.with_indifferent_access
         if self[i].present?
-          if [true, 1, '1'].include?(object_params[:_destroy])
-            delete(self[i]) # Delete the object
-          else
-            self[i].assign_attributes(object_params.except(:_destroy)) # Update the object
-          end
+          self[i].assign_attributes(object_params.except(:_destroy)) # Update the object
         else
           build(object_params.except(:_destroy)) # Build the object
         end
+
+        # Keep track of which items will be deleted
+        indexes_to_delete << i if [true, 1, '1'].include?(object_params[:_destroy])
+      end
+
+      # 2. Delete any items marked for deletion, must come after the first step and
+      #    must be in reverse order
+      indexes_to_delete.sort.reverse.each do |i|
+        delete(self[i])
       end
     end
 
