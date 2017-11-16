@@ -24,6 +24,8 @@ RSpec.describe LazyXmlModel do
 XML
       end
       it 'lets you set the attribute' do
+        expect(company.name).to be_nil
+
         company.name = 'Microsoft'
 
         expect(company.name).to eq('Microsoft')

@@ -6,6 +6,9 @@ module LazyXmlModel
       def self.attribute_node(name)
         # Getter Method
         define_method(name) do
+          attribute = xml_element.attributes[name.to_s]
+          return if attribute.nil?
+
           xml_element.attributes[name.to_s].value
         end
 
