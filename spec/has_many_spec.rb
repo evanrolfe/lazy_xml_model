@@ -258,7 +258,7 @@ XML
 
         company.employees_attributes = {
           '0' => employee1_attributes, # Employee1 gets jobtitle updated
-          '1' => { _destroy: true },   # Employee2 gets deleted
+          '1' => { _destroy: '1' },    # Employee2 gets deleted
           '2' => employee3_attributes  # Employee3 is added
         }
       end

@@ -63,7 +63,7 @@ module LazyXmlModel
         i = i.to_i
 
         if self[i].present?
-          if object_params[:_destroy] == true
+          if [true, 1, '1'].include?(object_params[:_destroy])
             delete(self[i]) # Delete the object
           else
             self[i].assign_attributes(object_params) # Update the object
