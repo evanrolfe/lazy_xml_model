@@ -72,7 +72,9 @@ company.trading = 'no'
 ```ruby
 company.description.headquarters
 # => 'Nuremberg'
-company.description = nil # Removes the <description> tag from the xml
+company.description.destroy # Removes the <description> tag from the xml
+company.description
+# => nil
 company.build_description # Adds a new Description object and <description/> tag
 company.description.headquarters = 'Prague' # Sets the value on the new description
 ```
