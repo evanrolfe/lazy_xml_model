@@ -69,7 +69,7 @@ XML
 </image>
 XML
     end
-    let(:image) { Image.build_from_xml_str(xml_str) }
+    let(:image) { Image.parse(xml_str) }
     let(:update_attributes) do
       {
         "name" => "Christians_openSUSE_13.2_JeOS",
@@ -136,7 +136,7 @@ XML
 </image>
 XML
     end
-    let(:image) { Image.build_from_xml_str(xml_str) }
+    let(:image) { Image.parse(xml_str) }
     let(:update_attributes) do
       {
         "name" => "Christians_openSUSE_13.2_JeOS",
@@ -206,7 +206,7 @@ XML
 </image>
 XML
     end
-    let(:image) { Image.build_from_xml_str(xml_str) }
+    let(:image) { Image.parse(xml_str) }
     let(:update_attributes) do
       {
         "name" => "Christians_openSUSE_13.2_JeOS",

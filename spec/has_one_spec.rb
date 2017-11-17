@@ -2,7 +2,7 @@ RSpec.describe LazyXmlModel do
   describe 'object getter method' do
     include_context 'example xml'
 
-    let(:company) { Company.build_from_xml_str(company_xml_str) }
+    let(:company) { Company.parse(company_xml_str) }
 
     it 'parses the attributes' do
       expect(company.description).to have_attributes(
@@ -108,7 +108,7 @@ RSpec.describe LazyXmlModel do
   describe 'object delete method' do
     include_context 'example xml'
 
-    let(:company) { Company.build_from_xml_str(company_xml_str) }
+    let(:company) { Company.parse(company_xml_str) }
 
     before do
       company.description.delete

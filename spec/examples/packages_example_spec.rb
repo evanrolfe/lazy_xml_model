@@ -62,7 +62,7 @@ XML
   end
 
   describe 'getting a package' do
-    let(:image) { Example::Image.build_from_xml_str(xml_str) }
+    let(:image) { Example::Image.parse(xml_str) }
 
     it 'parses the package groups' do
       expect(image.package_groups.count).to eq(2)
@@ -108,7 +108,7 @@ XML
 </image>
  XML
      end
-     let(:image) { Example::Image.build_from_xml_str(xml_str) }
+     let(:image) { Example::Image.parse(xml_str) }
 
      let(:update_attributes) do
        {

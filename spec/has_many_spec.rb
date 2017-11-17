@@ -2,7 +2,7 @@ RSpec.describe LazyXmlModel do
   include_context 'example xml'
 
   describe '#collection' do
-    let(:company) { Company.build_from_xml_str(company_xml_str) }
+    let(:company) { Company.parse(company_xml_str) }
 
     it 'parses the collection' do
       expect(company.employees.count).to eq(3)
@@ -55,7 +55,7 @@ XML
     end
 
     context 'on a collection with elements' do
-      let(:company) { Company.build_from_xml_str(company_xml_str) }
+      let(:company) { Company.parse(company_xml_str) }
 
       before do
         company.employees << new_employee
@@ -73,7 +73,7 @@ XML
   end
 
   describe '#collection.delete' do
-    let(:company) { Company.build_from_xml_str(company_xml_str) }
+    let(:company) { Company.parse(company_xml_str) }
     let(:deleted_employee) { company.employees[0] }
 
     before do
@@ -90,7 +90,7 @@ XML
   end
 
   describe '#collection.delete_all' do
-    let(:company) { Company.build_from_xml_str(company_xml_str) }
+    let(:company) { Company.parse(company_xml_str) }
 
     before do
       company.employees.delete_all
@@ -151,7 +151,7 @@ XML
       end
 
       context 'on a collection with elements' do
-        let(:company) { Company.build_from_xml_str(company_xml_str) }
+        let(:company) { Company.parse(company_xml_str) }
 
         before do
           company.employees.build

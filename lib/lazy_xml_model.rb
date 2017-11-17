@@ -23,7 +23,7 @@ module LazyXmlModel
     #
     # Class Methods
     #
-    def self.build_from_xml_str(xml_string)
+    def self.parse(xml_string)
       object = self.new
       object.xml_document = Nokogiri::XML::Document.parse(xml_string, &:noblanks)
       object

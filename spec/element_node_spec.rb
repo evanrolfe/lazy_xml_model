@@ -3,7 +3,7 @@ RSpec.describe LazyXmlModel do
     context 'when the element exists in the xml' do
       include_context 'example xml'
 
-      let(:company) { Company.build_from_xml_str(company_xml_str) }
+      let(:company) { Company.parse(company_xml_str) }
 
       it 'returns the value of the element' do
         expect(company.trading).to eq('yes')
@@ -11,7 +11,7 @@ RSpec.describe LazyXmlModel do
     end
 
     context 'when the element doesnt exist in the xml' do
-      let(:company) { Company.build_from_xml_str('<company/>') }
+      let(:company) { Company.parse('<company/>') }
 
       it 'returns nil' do
         expect(company.trading).to be_nil
@@ -23,7 +23,7 @@ RSpec.describe LazyXmlModel do
     context 'when the element exists in the xml' do
       include_context 'example xml'
 
-      let(:company) { Company.build_from_xml_str(company_xml_str) }
+      let(:company) { Company.parse(company_xml_str) }
 
       before do
         company.trading = 'no'
@@ -35,7 +35,7 @@ RSpec.describe LazyXmlModel do
     end
 
     context 'when the element doesnt exist in the xml' do
-      let(:company) { Company.build_from_xml_str('<company/>') }
+      let(:company) { Company.parse('<company/>') }
 
       before do
         company.trading = 'no'

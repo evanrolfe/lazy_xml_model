@@ -3,7 +3,7 @@ RSpec.describe LazyXmlModel do
     context 'when building from an xml string' do
       include_context 'example xml'
 
-      let(:company) { Company.build_from_xml_str(company_xml_str) }
+      let(:company) { Company.parse(company_xml_str) }
 
       it 'parses the attributes' do
         expect(company.name).to eq('SUSE')

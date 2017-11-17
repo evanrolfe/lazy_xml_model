@@ -31,24 +31,24 @@ Ruby models:
 ```ruby
 class Company
   include LazyXmlModel
-  
+
   attribute_node :name
   element_node :trading
-  
+
   has_one :description, class_name: 'Description'
   has_many :employees, class_name: 'Employee'
 end
 
 class Description
   include LazyXmlModel
-  
+
   element_node :headquarters
   element_node :website
 end
 
 class Employee
   include LazyXmlModel
-  
+
   attribute_node :name
   element_node :jobtitle
 end
@@ -56,7 +56,7 @@ end
 **Parsing the xml:**
 ```ruby
 xml_str = File.read('company.xml')
-company = Company.build_from_xml_str(xml_str)
+company = Company.parse(xml_str)
 ```
 
 **Accessing elements & attributes:**
@@ -100,7 +100,7 @@ company.to_xml
 
 **Validating the XML input**
 ```ruby
-company = Company.build_from_xml_str('<company name="an invalid company!">')
+company = Company.parse('<company name="an invalid company!">')
 company.xml_document.errors
 # => => [#<Nokogiri::XML::SyntaxError: 1:37: FATAL: Premature end of data in tag company line 1>]
 ```
@@ -113,13 +113,13 @@ class Company
   include LazyXmlModel
   include ActiveModel::Model
   include ActiveModel::Validations
-    
+
   attribute_node :name
   element_node :trading
-  
+
   has_one :description, class_name: 'Description'
   has_many :employees, class_name: 'Employee'
-  
+
   validates :name, presence: true
   validates :trading, inclusion: { in: %w(yes no) }
 end
@@ -144,7 +144,7 @@ Example XML file `company.xml`:
 ```
 ```ruby
 xml_str = File.read('company.xml')
-company = Company.build_from_xml_str(xml_str)
+company = Company.parse(xml_str)
 company.valid?
 # => false
 company.errors.messages
@@ -174,7 +174,7 @@ If you include ActiveModel on your models then LazyXmlMapping gives you an `_att
     <div class="form-group">
       <%= description_fields.label :website %>
       <%= description_fields.text_field :website %>
-    </div>    
+    </div>
   <% end %>
 
   <%= f.fields_for :employees, f.object.employees.to_a do |employees_fields| %>
@@ -200,7 +200,7 @@ If you include ActiveModel on your models then LazyXmlMapping gives you an `_att
       </label>
     </div>
   <% end %>
-  
+
   <%= f.submit 'Save' %>
 <% end %>
 
