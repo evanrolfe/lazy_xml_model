@@ -67,6 +67,7 @@ module LazyXmlModel
       attributes.each do |i, object_params|
         i = i.to_i
         object_params = object_params.with_indifferent_access
+
         if self[i].present?
           self[i].assign_attributes(object_params.except(:_destroy)) # Update the object
         else
@@ -87,7 +88,7 @@ module LazyXmlModel
     private
 
     def xml_elements
-      xml_element.elements.select { |element| element.name == association_name }
+      xml_element.elements.select { |element| element.name == element_name }
     end
 
     def collection
@@ -109,6 +110,10 @@ module LazyXmlModel
           item
         end
       end
+    end
+
+    def element_name
+      klass.tag || association_name
     end
 
     def klass
