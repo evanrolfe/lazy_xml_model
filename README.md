@@ -1,12 +1,12 @@
 # LazyXmlModel
 Lets you modify xml files using ruby models with an interface similar to ActiveRecord models. It also lazily evaluates the xml file so you do not have to specify a model which covers the entire xml file. This is useful if you only want to modify certain parts of an xml file but do not care about the other contents.
 
-### Installation
+## Installation
 Add this to your Gemfile:
 ```ruby
 gem 'lazy-xml-model', git: 'https://github.com/evanrolfe/lazy-xml-model'
 ```
-### Usage
+## Usage
 Example XML file `company.xml`:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -105,7 +105,7 @@ company.xml_document.errors
 # => => [#<Nokogiri::XML::SyntaxError: 1:37: FATAL: Premature end of data in tag company line 1>]
 ```
 
-### Integrating with ActiveModel
+## Integrating with ActiveModel
 
 LazyXmlModel plays nicely with ActiveModel so you can have nice things like mass assignment and validations on your xml models.
 ```ruby
@@ -150,7 +150,7 @@ company.valid?
 company.errors.messages
 # => {:name=>["can't be blank"]}
 ```
-### Integrating with rails nested forms
+## Integrating with rails nested forms
 If you include ActiveModel on your models then LazyXmlMapping gives you an `_attributes=` method on your has_one and has_many associations which means the models can be used with `fields_for` in the same way that an ActiveRecord model which calls `accepts_nested_attributes_for` works.
 
 ```html
@@ -206,7 +206,7 @@ If you include ActiveModel on your models then LazyXmlMapping gives you an `_att
 
 ```
 
-### TODO
+## TODO
 
 * Validate associated objects as well as the root object
 * Allow the deletion of has_many objects like `company.employees[0].delete`
