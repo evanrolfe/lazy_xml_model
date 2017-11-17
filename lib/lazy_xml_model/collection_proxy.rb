@@ -5,24 +5,24 @@ module LazyXmlModel
     include Enumerable
     extend Forwardable
 
-    attr_reader :association_name, :xml_element, :options
+    attr_reader :association_name, :xml_parent_element, :options
 
     def_delegators :collection, :each, :[], :size, :length, :empty?
 
-    def initialize(association_name, xml_element, options = {})
+    def initialize(association_name, xml_parent_element, options = {})
       @association_name = association_name
-      @xml_element = xml_element
+      @xml_parent_element = xml_parent_element
       @options = options
     end
 
     def <<(item)
       item.xml_document = nil
-      item.xml_parent_element = xml_element
+      item.xml_parent_element = xml_parent_element
 
       if collection.any?
         collection.last.xml_element.add_next_sibling(item.xml_element)
       else
-        xml_element.add_child(item.xml_element)
+        xml_parent_element.add_child(item.xml_element)
       end
 
       @collection << item
@@ -88,7 +88,7 @@ module LazyXmlModel
     private
 
     def xml_elements
-      xml_element.elements.select { |element| element.name == element_name }
+      xml_parent_element.elements.select { |element| element.name == element_name }
     end
 
     def collection
@@ -102,7 +102,7 @@ module LazyXmlModel
         else
           item = begin
             new_item = klass.new
-            new_item.xml_parent_element = xml_element
+            new_item.xml_parent_element = xml_parent_element
             new_item.xml_element = element
             new_item
           end
