@@ -1,39 +1,218 @@
 # LazyXmlModel
+Lets you modify xml files using ruby models with an interface similar to ActiveRecord models. It also lazily evaluates the xml file so you do not have to specify a model which covers the entire xml file. This is useful if you only want to modify certain parts of an xml file but do not care about the other contents.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lazy_xml_model`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
-
+### Installation
+Add this to your Gemfile:
 ```ruby
-gem 'lazy_xml_model'
+gem 'lazy-xml-model', git: 'https://github.com/evanrolfe/lazy-xml-model'
+```
+### Usage
+Example XML file `company.xml`:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<company name="SUSE">
+  <description type="about">
+    <headquarters>Nuremberg</headquarters>
+    <website>http://www.suse.com</website>
+  </description>
+  <trading>yes</trading>
+  <employee name="Tanya Erickson">
+    <jobtitle>Chief Marketing Synergist</jobtitle>
+  </employee>
+  <employee name="Rolando Garcia">
+    <jobtitle>Human Integration Coordinator</jobtitle>
+  </employee>
+  <employee name="Xavier Bringham">
+    <jobtitle>Regional Markets Executive</jobtitle>
+  </employee>
+</company>
+```
+Ruby models:
+```ruby
+class Company
+  include LazyXmlModel
+  
+  attribute_node :name
+  element_node :trading
+  
+  has_one :description, class_name: 'Description'
+  has_many :employees, class_name: 'Employee'
+end
+
+class Description
+  include LazyXmlModel
+  
+  element_node :headquarters
+  element_node :website
+end
+
+class Employee
+  include LazyXmlModel
+  
+  attribute_node :name
+  element_node :jobtitle
+end
+```
+**Parsing the xml:**
+```ruby
+xml_str = File.read('company.xml')
+company = Company.build_from_xml_str(xml_str)
 ```
 
-And then execute:
+**Accessing elements & attributes:**
+```ruby
+company.name
+# => 'SUSE'
+company.trading
+# => 'yes'
+company.name = 'openSuse'
+company.trading = 'no'
+```
+**has_one associations:**
+```ruby
+company.description.headquarters
+# => 'Nuremberg'
+company.description = nil # Removes the <description> tag from the xml
+company.build_description # Adds a new Description object and <description/> tag
+company.description.headquarters = 'Prague' # Sets the value on the new description
+```
+**has_many associations:**
+```ruby
+company.employees[0].name
+# => 'Tanya Erickson'
+company.employees[0].jobtitle
+# => 'Chief Marketing Synergist'
+company.employees.delete(company.employees[0]) # Removes this employee from the xml
+company.employees.build # Adds a new blank employee to the collection
+company.employees.delete_all
+```
+**Add a new item to has_many association:**
+```ruby
+new_employee = Employee.new
+new_employee.name = 'Evan Rolfe'
+new_employee.jobtitle = 'Junior Xml Parser'
+company.employees << new_employee
+```
+**Outputting the xml:**
+```ruby
+company.to_xml
+```
 
-    $ bundle
+**Validating the XML input**
+```ruby
+company = Company.build_from_xml_str('<company name="an invalid company!">')
+company.xml_document.errors
+# => => [#<Nokogiri::XML::SyntaxError: 1:37: FATAL: Premature end of data in tag company line 1>]
+```
 
-Or install it yourself as:
+### Integrating with ActiveModel
 
-    $ gem install lazy_xml_model
+LazyXmlModel plays nicely with ActiveModel so you can have nice things like mass assignment and validations on your xml models.
+```ruby
+class Company
+  include LazyXmlModel
+  include ActiveModel::Model
+  include ActiveModel::Validations
+    
+  attribute_node :name
+  element_node :trading
+  
+  has_one :description, class_name: 'Description'
+  has_many :employees, class_name: 'Employee'
+  
+  validates :name, presence: true
+  validates :trading, inclusion: { in: %w(yes no) }
+end
+```
 
-## Usage
+**Validating the object:**
+```ruby
+company = Company.new(name: 'My Company', trading: 'i dont know')
+company.valid?
+# => false
+company.errors.messages
+# => {:trading=>["is not included in the list"]}
+```
 
-TODO: Write usage instructions here
+**Validating the xml content:**
+Example XML file `company.xml`:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+  <trading>yes</trading>
+</company>
+```
+```ruby
+xml_str = File.read('company.xml')
+company = Company.build_from_xml_str(xml_str)
+company.valid?
+# => false
+company.errors.messages
+# => {:name=>["can't be blank"]}
+```
+### Integrating with rails nested forms
+If you include ActiveModel on your models then LazyXmlMapping gives you an `_attributes=` method on your has_one and has_many associations which means the models can be used with `fields_for` in the same way that an ActiveRecord model which calls `accepts_nested_attributes_for` works.
 
-## Development
+```html
+<%= form_for(company) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+  <div class="form-group">
+    <%= f.label :trading %>
+    <%= f.text_field :trading %>
+  </div>
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+  <%= f.fields_for :description do |description_fields| %>
+    <div class="form-group">
+      <%= description_fields.label :headquarters %>
+      <%= description_fields.text_field :headquarters %>
+    </div>
 
-## Contributing
+    <div class="form-group">
+      <%= description_fields.label :website %>
+      <%= description_fields.text_field :website %>
+    </div>    
+  <% end %>
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/lazy_xml_model.
+  <%= f.fields_for :employees, f.object.employees.to_a do |employees_fields| %>
+    <hr/>
+    <div class="row">
+      <b>Employee:</b>
+    </div>
 
-## License
+    <div class="form-group">
+      <%= employees_fields.label :name %>
+      <%= employees_fields.text_field :name %>
+    </div>
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+    <div class="form-group">
+      <%= employees_fields.label :jobtitle %>
+      <%= employees_fields.text_field :jobtitle %>
+    </div>
+
+    <div class="form-group">
+      <label class="form-check-label">
+        <%= employees_fields.check_box :_destroy %>
+        Delete?
+      </label>
+    </div>
+  <% end %>
+  
+  <%= f.submit 'Save' %>
+<% end %>
+
+```
+
+### TODO
+
+* Validate associated objects as well as the root object
+* Allow the deletion of has_many objects like `company.employees[0].delete`
+* Handle a collection of elements like:
+```xml
+<element>value1</element>
+<element>value2</element>
+<element>value3</element>
+```
