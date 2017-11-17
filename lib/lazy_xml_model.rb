@@ -18,7 +18,7 @@ module LazyXmlModel
     include ElementNode
 
     attr_writer :xml_document, :xml_parent_element, :xml_element
-    cattr_accessor :tag
+    class_attribute :tag
 
     #
     # Class Methods
