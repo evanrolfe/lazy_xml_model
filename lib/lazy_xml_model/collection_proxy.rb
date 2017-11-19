@@ -100,16 +100,18 @@ module LazyXmlModel
         if item_from_collection.present?
           item_from_collection
         else
-          item = begin
-            new_item = klass.new
-            new_item.xml_parent_element = xml_parent_element
-            new_item.xml_element = element
-            new_item
-          end
+          item = build_item_for_element(element)
           @collection << item
           item
         end
       end
+    end
+
+    def build_item_for_element(element)
+      new_item = klass.new
+      new_item.xml_parent_element = xml_parent_element
+      new_item.xml_element = element
+      new_item
     end
 
     def element_name
