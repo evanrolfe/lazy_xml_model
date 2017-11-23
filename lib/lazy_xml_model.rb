@@ -1,4 +1,5 @@
 require 'active_support'
+require 'active_support/inflector'
 require 'active_model'
 require 'rexml/document'
 require 'lazy_xml_model/version'
