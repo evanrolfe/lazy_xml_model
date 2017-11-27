@@ -4,7 +4,7 @@ Lets you modify xml files using ruby models with an interface similar to ActiveR
 ## Installation
 Add this to your Gemfile:
 ```ruby
-gem 'lazy-xml-model', git: 'https://github.com/evanrolfe/lazy-xml-model'
+gem 'lazy_xml_model', git: 'https://github.com/evanrolfe/lazy_xml_model'
 ```
 ## Usage
 Example XML file `company.xml`:
