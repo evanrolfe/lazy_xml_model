@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash/indifferent_access'
-
 module LazyXmlModel
   class CollectionProxy
     include Enumerable

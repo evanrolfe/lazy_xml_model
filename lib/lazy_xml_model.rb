@@ -1,7 +1,10 @@
-require 'active_support'
-require 'active_support/inflector'
 require 'active_model'
+require 'active_support'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/inflector'
+require 'forwardable'
 require 'nokogiri'
+
 require 'lazy_xml_model/version'
 require 'lazy_xml_model/attribute_node'
 require 'lazy_xml_model/element_node'
