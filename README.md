@@ -2,9 +2,14 @@
 Lets you modify xml files using ruby models with an interface similar to ActiveRecord models. It also lazily evaluates the xml file so you do not have to specify a model which covers the entire xml file. This is useful if you only want to modify certain parts of an xml file but do not care about the other contents.
 
 ## Installation
-Add this to your Gemfile:
+Install the gem:
+```bash
+gem install lazy_xml_model
+```
+
+And require it from your ruby file:
 ```ruby
-gem 'lazy_xml_model', git: 'https://github.com/evanrolfe/lazy_xml_model'
+require 'lazy_xml_model'
 ```
 ## Usage
 Example XML file `company.xml`:
