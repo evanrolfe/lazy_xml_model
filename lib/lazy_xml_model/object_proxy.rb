@@ -24,8 +24,7 @@ module LazyXmlModel
 
     # Setter Method
     def object=(new_object)
-      # TODO:
-      raise StandardError, 'You cannot replace an object yet sorry!' if @object.present?
+      @object.delete if @object.present?
 
       @object = new_object
 

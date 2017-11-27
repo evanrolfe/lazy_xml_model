@@ -16,19 +16,40 @@ RSpec.describe LazyXmlModel do
   end
 
   describe 'object setter method' do
-    let(:company) { Company.new }
-    let(:description) { Description.new }
+    context 'when the object is not already set' do
+      let(:company) { Company.new }
+      let(:description) { Description.new }
 
-    before do
-      company.description = description
+      before do
+        company.description = description
+      end
+
+      it 'sets the object' do
+        expect(company.description).to eq(description)
+      end
+
+      it 'includes the object in the xml output' do
+        expect(company.to_xml).to include(description.to_xml)
+      end
     end
 
-    it 'sets the object' do
-      expect(company.description).to eq(description)
-    end
+    context 'when the object is already set' do
+      include_context 'example xml'
 
-    it 'includes the object in the xml output' do
-      expect(company.to_xml).to include(description.to_xml)
+      let(:company) { Company.parse(company_xml_str) }
+      let(:new_description) { Description.new }
+
+      before do
+        company.description = new_description
+      end
+
+      it 'sets the object' do
+        expect(company.description).to eq(new_description)
+      end
+
+      it 'includes the object in the xml output' do
+        expect(company.to_xml).to include(new_description.to_xml)
+      end
     end
   end
 
