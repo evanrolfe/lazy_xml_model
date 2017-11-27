@@ -29,6 +29,19 @@ module LazyXmlModel
     end
     alias_method :push, :<<
 
+    def []=(index, new_item)
+      original_item = self[index]
+
+      new_item.xml_document = nil
+      new_item.xml_parent_element = xml_parent_element
+
+      # 1. Replace the xml with new_item.to_xml
+      original_item.xml_element.replace(new_item.xml_element)
+
+      # 2. Replace the original object with the new object
+      @collection[index] = new_item
+    end
+
     # TODO:
     def concat(item)
       raise NotImplementedError

@@ -10,7 +10,7 @@ RSpec.shared_context 'example xml' do
     <website>http://www.suse.com</website>
   </description>
   <trading>yes</trading>
-  <employee name="Tanya Erickson">
+  <employee name="Tanya Erickson" hello="world">
     <jobtitle>Chief Marketing Synergist</jobtitle>
     <yearjoined>2001</yearjoined>
   </employee>
