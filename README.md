@@ -84,7 +84,7 @@ company.employees[0].name
 # => 'Tanya Erickson'
 company.employees[0].jobtitle
 # => 'Chief Marketing Synergist'
-company.employees.delete(company.employees[0]) # Removes this employee from the xml
+company.employees[0].delete # Deletes the employee
 company.employees.build # Adds a new blank employee to the collection
 company.employees.delete_all
 ```
@@ -211,7 +211,6 @@ If you include ActiveModel on your models then LazyXmlMapping gives you an `_att
 ## TODO
 
 * Validate associated objects as well as the root object
-* Allow the deletion of has_many objects like `company.employees[0].delete`
 * Handle a collection of elements like:
 ```xml
 <element>value1</element>

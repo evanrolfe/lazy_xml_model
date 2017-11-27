@@ -1,13 +1,12 @@
 require 'active_support'
 require 'active_support/inflector'
 require 'active_model'
-require 'rexml/document'
+require 'nokogiri'
 require 'lazy_xml_model/version'
 require 'lazy_xml_model/attribute_node'
 require 'lazy_xml_model/element_node'
 require 'lazy_xml_model/has_one_association'
 require 'lazy_xml_model/has_many_association'
-require 'nokogiri'
 
 module LazyXmlModel
   extend ActiveSupport::Concern

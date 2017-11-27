@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["esrolfe@suse.de"]
 
   spec.summary       = %q{Allows you to create ActiveRecord-like models for editing XML files.}
-  spec.homepage      = "http://openbuildservice.org/"
+  spec.homepage      = "https://github.com/evanrolfe/lazy-xml-model"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
