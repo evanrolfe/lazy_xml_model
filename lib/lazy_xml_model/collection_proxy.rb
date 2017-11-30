@@ -69,6 +69,7 @@ module LazyXmlModel
         end
 
       self << new_object
+      new_object
     end
 
     def attributes=(attributes)

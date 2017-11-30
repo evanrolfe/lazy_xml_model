@@ -131,10 +131,15 @@ XML
           XML
         end
 
+        subject { company.employees.build }
+
         before do
-          company.employees.build
-          company.employees[0].name = 'Kurt Campbell'
-          company.employees[0].jobtitle = 'Senior XML Specialist'
+          subject.name = 'Kurt Campbell'
+          subject.jobtitle = 'Senior XML Specialist'
+        end
+
+        it 'returns the new object' do
+          expect(subject).to be_an(Employee)
         end
 
         it 'adds the object to the collection' do
