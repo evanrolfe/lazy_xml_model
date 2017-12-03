@@ -28,7 +28,11 @@ module LazyXmlModel
     #
     def self.parse(xml_string)
       object = self.new
-      object.xml_document = Nokogiri::XML::Document.parse(xml_string, &:noblanks)
+
+      if xml_string.present?
+        object.xml_document = Nokogiri::XML::Document.parse(xml_string, &:noblanks)
+      end
+
       object
     end
   end
