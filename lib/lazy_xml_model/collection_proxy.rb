@@ -5,7 +5,7 @@ module LazyXmlModel
 
     attr_reader :association_name, :xml_parent_element, :options
 
-    def_delegators :collection, :each, :[], :size, :length, :empty?
+    def_delegators :collection, :each, :[], :size, :length, :empty?, :last
 
     def initialize(association_name, xml_parent_element, options = {})
       @association_name = association_name

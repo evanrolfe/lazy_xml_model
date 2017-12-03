@@ -160,13 +160,13 @@ XML
 
         before do
           company.employees.build
-          company.employees[3].name = 'Kurt Campbell'
-          company.employees[3].jobtitle = 'Senior XML Specialist'
+          company.employees.last.name = 'Kurt Campbell'
+          company.employees.last.jobtitle = 'Senior XML Specialist'
         end
 
         it 'adds the object to the collection' do
           expect(company.employees.count).to eq(4)
-          expect(company.employees[3]).to have_attributes(
+          expect(company.employees.last).to have_attributes(
             name: 'Kurt Campbell',
             jobtitle: 'Senior XML Specialist'
           )
